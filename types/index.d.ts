@@ -650,6 +650,8 @@ declare module "jspdf" {
     putOnlyUsedFonts?: boolean;
     hotfixes?: string[];
     floatPrecision?: number | "smart";
+    autoPageOrientation?: boolean;
+
   }
 
   export interface Point {

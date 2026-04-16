@@ -187,6 +187,7 @@ function TilingPattern(boundingBox, xStep, yStep, gState, matrix) {
  * @param {number} [options.precision=16] Precision of the element-positions.
  * @param {number} [options.userUnit=1.0] Not to be confused with the base unit. Please inform yourself before you use it.
  * @param {string[]} [options.hotfixes] An array of strings to enable hotfixes such as correct pixel scaling.
+ * @param {boolean} [options.autoPageOrientation=true] When enabled, jsPDF swaps custom page dimensions to match the selected orientation ("portrait" keeps height >= width, "landscape" keeps width >= height). Disable to preserve custom dimensions as provided.
  * @param {Object} [options.encryption]
  * @param {string} [options.encryption.userPassword] Password for the user bound by the given permissions list.
  * @param {string} [options.encryption.ownerPassword] Both userPassword and ownerPassword should be set for proper authentication.
@@ -216,6 +217,7 @@ function jsPDF(options) {
   var precision;
   var floatPrecision = 16;
   var defaultPathOperation = "S";
+  var autoPageOrientation = true;
   var encryptionOptions = null;
 
   options = options || {};
@@ -239,6 +241,9 @@ function jsPDF(options) {
     }
     if (typeof options.floatPrecision !== "undefined") {
       floatPrecision = options.floatPrecision;
+    }
+    if (typeof options.autoPageOrientation === "boolean") {
+      autoPageOrientation = options.autoPageOrientation;
     }
     defaultPathOperation = options.defaultPathOperation || "S";
   }
@@ -2738,17 +2743,19 @@ function jsPDF(options) {
 
     format = [width, height];
 
-    switch (orientation.substr(0, 1)) {
-      case "l":
-        if (height > width) {
-          format = [height, width];
-        }
-        break;
-      case "p":
-        if (width > height) {
-          format = [height, width];
-        }
-        break;
+    if (autoPageOrientation) {
+      switch (orientation.substr(0, 1)) {
+        case "l":
+          if (height > width) {
+            format = [height, width];
+          }
+          break;
+        case "p":
+          if (width > height) {
+            format = [height, width];
+          }
+          break;
+      }
     }
 
     beginPage(format);

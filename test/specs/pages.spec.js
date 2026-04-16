@@ -86,4 +86,20 @@ describe("Core: Paging", () => {
     expect(doc.getPageWidth(0)).toEqual(doc.getPageWidth(1));
     expect(doc.getPageHeight(0)).toEqual(doc.getPageHeight(1));
   });
+
+  it("should preserve custom dimensions when autoPageOrientation is disabled", () => {
+    const doc = new jsPDF({
+      orientation: "portrait",
+      unit: "pt",
+      format: [600, 300],
+      autoPageOrientation: false
+    });
+
+    expect(doc.getPageWidth(1)).toEqual(600);
+    expect(doc.getPageHeight(1)).toEqual(300);
+
+    doc.addPage([700, 200], "portrait");
+    expect(doc.getPageWidth(2)).toEqual(700);
+    expect(doc.getPageHeight(2)).toEqual(200);
+  });
 });
